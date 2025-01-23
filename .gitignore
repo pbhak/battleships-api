@@ -1,3 +1,6 @@
+# Used by Bruno for API testing
+bruno/
+
 *.gem
 *.rbc
 /.config
