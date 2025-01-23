@@ -10,7 +10,7 @@ class Game
     @board = Array.new(10) { Array.new(10, 0) }
   end
 
-  # Get board position as a ranging from (1,1) to (10,10)
+  # Get position on board given a range from (1,1) to (10,10)
   def get_coordinate(board_x, board_y)
     @board[board_x - 1][board_y - 1]
   end
@@ -25,6 +25,21 @@ class Game
     @board[board_x - 1][board_y - 1].zero? ? return : @board[board_x - 1][board_y - 1] = 2
   end
 
+  def place_ships
+    SHIP_LENGTHS.each do |ship_size|
+      placed = false
+      # Randomly decide whether or not the ship will be placed vertically
+      is_ship_vertical = [true, false].sample
+
+      until placed
+        # Get a random empty square on the board - if the square is not empty, repeat until it is
+        rand_x, rand_y = rand(1..10), rand(1..10) 
+        rand_x, rand_y = rand(1..10), rand(1..10) until get_coordinate(rand_x, rand_y).zero?
+
+        puts "(#{rand_x - 1}, #{rand_y - 1}) = #{get_coordinate(rand_x, rand_y)} for ship size #{ship_size}"
+      end
+    end
+  end
 
   # TODO: create segment to add or randomize ship positions on board
   # TODO: create turn loop and win/lose conditions
@@ -32,4 +47,4 @@ end
 
 x = Game.new
 
-p x.get_coordinate(1, 1)
+x.place_ships
