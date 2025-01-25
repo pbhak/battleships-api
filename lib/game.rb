@@ -2,7 +2,7 @@
 
 # Class representing the core game
 class Game # rubocop:disable Metrics/ClassLength
-  attr_reader :ships, :board
+  attr_reader :ships
 
   SHIPS = {
     carrier: 5,
@@ -68,11 +68,11 @@ class Game # rubocop:disable Metrics/ClassLength
     true
   end
 
-  def attack(location) # rubocop:disable Metrics/AbcSize
+  def attack(location) # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
     col = location[0].ord - 96
     row = location[1].to_i
 
-    return unless occupied?(col, row)
+    return false unless occupied?(col, row)
 
     # Find the ship that was hit
     @ships.each do |ship_name, ship|
@@ -84,6 +84,8 @@ class Game # rubocop:disable Metrics/ClassLength
       @ships[ship_name][:sunk] = true if @ships[ship_name][:hit].sort == @ships[ship_name][:location].sort
       break
     end
+
+    true
   end
 
   def to_s
@@ -172,9 +174,15 @@ class Game # rubocop:disable Metrics/ClassLength
     ships
   end
 
+  def remaining_ships
+    ships_left = 0
+    @ships.each_value do |ship|
+      ships_left += 1 unless ship[:sunk]
+    end
+
+    ships_left
+  end
+
   # TODO: create segment to add or randomize ship positions on board
   # TODO: create turn loop and win/lose conditions
 end
-
-x = Game.new
-a = [1, 2, 3, 4]

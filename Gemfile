@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
-source "https://rubygems.org"
+source 'https://rubygems.org'
 
-gem "sinatra"
-gem "rackup"
-gem "puma"
-gem "rubocop"
+gem 'puma'
+gem 'rackup'
+gem 'rubocop'
+gem 'sinatra'
+gem 'wdm', '>= 0.1.0' if Gem.win_platform?
