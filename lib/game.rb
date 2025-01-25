@@ -3,6 +3,7 @@
 # Class representing the core game
 class Game # rubocop:disable Metrics/ClassLength
   attr_reader :ships
+  attr_accessor :players
 
   SHIPS = {
     carrier: 5,
@@ -16,6 +17,7 @@ class Game # rubocop:disable Metrics/ClassLength
     # Creates a new two-dimensional array representing a 10x10 game board
     @board = Array.new(10) { Array.new(10, :empty) }
     @ships = create_ships
+    @players = []
   end
 
   def place_ship(start_location, end_location) # rubocop:disable Metrics/AbcSize,Metrics/MethodLength,Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
