@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 # Class representing the core game
-class Game
+class Game # rubocop:disable Metrics/ClassLength
   attr_reader :ships, :board
 
   SHIPS = {
@@ -66,6 +66,24 @@ class Game
     end
 
     true
+  end
+
+  def attack(location) # rubocop:disable Metrics/AbcSize
+    col = location[0].ord - 96
+    row = location[1].to_i
+
+    return unless occupied?(col, row)
+
+    # Find the ship that was hit
+    @ships.each do |ship_name, ship|
+      next unless ship[:location].include?([col, row])
+
+      sink(col, row)
+      @ships[ship_name][:hit] << [col, row]
+      # Mark ship as sunk if all of its points have been hit
+      @ships[ship_name][:sunk] = true if @ships[ship_name][:hit].sort == @ships[ship_name][:location].sort
+      break
+    end
   end
 
   def to_s
@@ -147,7 +165,8 @@ class Game
       ships[ship_name] = {
         size: ship_size,
         sunk: false,
-        location: []
+        location: [],
+        hit: []
       }
     end
     ships
@@ -158,3 +177,4 @@ class Game
 end
 
 x = Game.new
+a = [1, 2, 3, 4]
