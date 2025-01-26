@@ -6,6 +6,8 @@ require_relative 'lib/player'
 
 games = {}
 players = []
+players << Player.new(players)
+players << Player.new(players)
 
 set :show_exceptions, false
 
@@ -24,7 +26,7 @@ error 500 do
 end
 
 error 400 do
-  JSON.generate({ error: '400 Bad Request', message: 'Invalid request body' })
+  JSON.generate({ error: '400 Bad Request', message: 'Invalid request' })
 end
 
 get '/' do
@@ -32,7 +34,7 @@ get '/' do
 end
 
 post '/newplayer' do
-  players << (params[:name].nil? ? Player.new : Player.new(params[:player]))
+  players << (params['name'].nil? ? Player.new(players) : Player.new(players, params['name']))
 
   JSON.generate(
     {
@@ -43,11 +45,15 @@ post '/newplayer' do
   )
 end
 
-post '/new' do
-  p @request_body
+post '/newgame' do
   halt 400 if @request_body['players'].nil?
+  halt 400 unless @request_body['players'].length == 2
+  unless players.map(&:id).include?(@request_body['players'][0]) && players.map(&:id).include?(@request_body['players'][1])
+    halt 400
+  end
+
   id = rand(100..999)
-  games[id] = Game.new
+  games[id] = Game.new(@request_body['players'])
 
   JSON.generate(
     {
@@ -76,11 +82,27 @@ get '/games' do
   games.each do |id, game|
     games_json << {
       id: id,
-      ships_remaining: game.remaining_ships
+      ships_remaining: game.remaining_ships,
+      players: game.players
     }
   end
 
   JSON.generate(games_json)
+end
+
+get '/players' do
+  players_json = {}
+
+  players_json['players'] = players.length
+  players.each do |player|
+    players_json[player.id] = {
+      name: player.name,
+      game_id: player.game_id,
+      opponent: player.opponent
+    }
+  end
+
+  JSON.generate(players_json)
 end
 
 get '/ships/:id' do |id|
@@ -98,4 +120,42 @@ get '/ships/:id' do |id|
     }
   end
   JSON.generate(ships_json)
+end
+
+post '/attack/:game/:location' do |game, location|
+  game = game.to_i
+  halt 400 unless games.key?(game)
+  # TODO: figure out why this returns true for an empty square
+  return JSON.generate({ hit: true }) if games[game].attack(location)
+
+  return JSON.generate({ hit: false })
+end
+
+get '/board/:game' do |game|
+  content_type 'application/octet-stream'
+
+  board_str = ['    A B C D E F G H I J']
+  game = game.to_i
+  halt 400 unless games.key?(game)
+
+  board = games[game].board
+  current_row = 0
+  board.each do |row|
+    row_str = []
+    row_str << (current_row + 1 == 10 ? "#{(current_row += 1).to_i} " : "#{(current_row += 1).to_i}  ")
+    row.each do |cell|
+      case cell
+      when :empty
+        row_str << '|_'
+      when :occupied
+        row_str << '|o'
+      when :sunk
+        row_str << '|x'
+      end
+    end
+    row_str << '|'
+    board_str << row_str.join('')
+  end
+
+  board_str.join("\n")
 end

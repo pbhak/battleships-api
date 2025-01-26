@@ -2,8 +2,7 @@
 
 # Class representing the core game
 class Game # rubocop:disable Metrics/ClassLength
-  attr_reader :ships
-  attr_accessor :players
+  attr_reader :ships, :players, :board
 
   SHIPS = {
     carrier: 5,
@@ -13,11 +12,11 @@ class Game # rubocop:disable Metrics/ClassLength
     patrol_boat: 2
   }.freeze
 
-  def initialize
+  def initialize(players)
     # Creates a new two-dimensional array representing a 10x10 game board
-    @board = Array.new(10) { Array.new(10, :empty) }
+    @board = Array.new(10) { Array.new(10, :occupied) }
     @ships = create_ships
-    @players = []
+    @players = players
   end
 
   def place_ship(start_location, end_location) # rubocop:disable Metrics/AbcSize,Metrics/MethodLength,Metrics/CyclomaticComplexity,Metrics/PerceivedComplexity
@@ -184,7 +183,4 @@ class Game # rubocop:disable Metrics/ClassLength
 
     ships_left
   end
-
-  # TODO: create segment to add or randomize ship positions on board
-  # TODO: create turn loop and win/lose conditions
 end
