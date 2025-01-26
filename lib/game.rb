@@ -69,6 +69,16 @@ class Game # rubocop:disable Metrics/ClassLength
     true
   end
 
+  def randomly_place_ships
+    SHIPS.each_value do |ship_size|
+      placed = false
+      until placed
+        random_location = random_pos_letters
+        placed = true if place_ship(random_location, calculate_end_location(random_location), ship_size)
+      end
+    end
+  end
+
   def attack(location) # rubocop:disable Metrics/AbcSize,Metrics/MethodLength,Metrics/CyclomaticComplexity
     col = location[0].ord - 96
     row = location[1].to_i
@@ -169,6 +179,10 @@ class Game # rubocop:disable Metrics/ClassLength
     [rand(1..10), rand(1..10)]
   end
 
+  def random_pos_letters
+    Game.convert_to_letters(random_pos)
+  end
+
   def create_ships
     ships = {}
     SHIPS.each do |ship_name, ship_size|
@@ -189,6 +203,17 @@ class Game # rubocop:disable Metrics/ClassLength
     end
 
     ships_left
+  end
+
+  def calculate_end_location(start_location, vertical, size)
+    start_col = start_location[0].ord - 96
+    start_row = start_location[1].to_i
+
+    if vertical
+      Game.convert_to_letters([start_col, start_row + (size - 1)])
+    else
+      Game.convert_to_letters([start_col + (size - 1), start_row])
+    end
   end
 
   def self.convert_to_letters(location)

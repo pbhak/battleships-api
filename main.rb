@@ -152,6 +152,19 @@ post '/place/:game/*-*' do |game, start_location, end_location|
   halt 400
 end
 
+post '/place/:game/random' do |game|
+  game = game.to_i
+  halt 400 unless games.key?(game)
+
+  games[game].randomly_place_ships
+
+  JSON.generate(
+    {
+      message: 'Ships placed'
+    }
+  )
+end
+
 get '/board/:game' do |game|
   content_type 'application/octet-stream'
 
