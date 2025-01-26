@@ -7,7 +7,7 @@ require_relative 'lib/player'
 games = {}
 players = []
 
-set :port, 43357
+set :port, 43357 # rubocop:disable Style/NumericLiterals
 set :environment, 'production'
 # set :environment, 'development'
 
@@ -76,14 +76,28 @@ end
 
 delete '/delete/:id' do |id|
   id = id.to_i
-  deleted = games.delete(id).nil?
 
-  JSON.generate(
-    {
-      id: id,
-      message: deleted ? 'Game not found' : 'Game deleted'
-    }
-  )
+  if id.digits.length == 3
+    deleted = games.delete(id).nil?
+
+    return JSON.generate(
+      {
+        id: id,
+        message: deleted ? 'Game not found' : 'Game deleted'
+      }
+    )
+  elsif id.digits.length == 4
+    deleted = players.delete(id).nil?
+
+    return JSON.generate(
+      {
+        id: id,
+        message: deleted ? 'Player not found' : 'Player deleted'
+      }
+    )
+  end
+
+  halt 400
 end
 
 get '/games' do
