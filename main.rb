@@ -29,10 +29,6 @@ error 400 do
   JSON.generate({ error: '400 Bad Request', message: 'Invalid request' })
 end
 
-get '/' do
-  JSON.generate({ message: 'Hi!' })
-end
-
 post '/newplayer' do
   players << (params['name'].nil? ? Player.new(players) : Player.new(players, params['name']))
 
