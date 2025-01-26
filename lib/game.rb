@@ -71,7 +71,7 @@ class Game # rubocop:disable Metrics/ClassLength
 
   def randomly_place_ships
     @ships.each_value do |ship|
-      next unless ship.location.empty?
+      return false unless ship.location.empty?
 
       ship_size = ship.size
       placed = false

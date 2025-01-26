@@ -170,7 +170,7 @@ post '/place/:game/random' do |game|
   game = game.to_i
   halt 400 unless games.key?(game)
 
-  games[game].randomly_place_ships
+  halt 400 unless games[game].randomly_place_ships
 
   JSON.generate(
     {
