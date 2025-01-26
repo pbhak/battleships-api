@@ -165,6 +165,24 @@ post '/attack/:game/:location' do |game, location|
   return JSON.generate({ hit: false })
 end
 
+post '/attack/:game' do |game|
+  game = game.to_i
+  halt 400 unless games.key?(game)
+
+  attack = games[game].attack(games[game].random_pos_letters)
+
+  unless attack == false
+    return JSON.generate(
+      {
+        hit: true,
+        sunk: attack == :sunk
+      }
+    )
+  end
+
+  return JSON.generate({ hit: false })
+end
+
 post '/place/:game/*-*' do |game, start_location, end_location|
   game = game.to_i
   halt 400 unless games.key?(game)
