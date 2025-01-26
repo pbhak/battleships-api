@@ -74,7 +74,8 @@ class Game # rubocop:disable Metrics/ClassLength
       placed = false
       until placed
         random_location = random_pos_letters
-        placed = true if place_ship(random_location, calculate_end_location(random_location), ship_size)
+        placed = true if place_ship(random_location,
+                                    calculate_end_location(random_location, [true, false].sample, ship_size))
       end
     end
   end
