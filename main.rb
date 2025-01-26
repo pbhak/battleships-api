@@ -115,8 +115,9 @@ get '/ships/:id' do |id|
     ships_json << {
       name: ship_name.to_s.split('_').map(&:capitalize).join(' '),
       size: ship[:size],
-      location: ship[:location],
-      hits: ship[:hit]
+      location: ship[:location].map { |location| Game.convert_to_letters(location) },
+      hits: ship[:hit].map { |location| Game.convert_to_letters(location) },
+      sunk: ship[:location] == ship[:hit]
     }
   end
   JSON.generate(ships_json)
@@ -125,10 +126,34 @@ end
 post '/attack/:game/:location' do |game, location|
   game = game.to_i
   halt 400 unless games.key?(game)
-  # TODO: figure out why this returns true for an empty square
-  return JSON.generate({ hit: true }) if games[game].attack(location)
+
+  attack = games[game].attack(location)
+
+  unless attack == false
+    return JSON.generate(
+      {
+        hit: true,
+        sunk: attack == :sunk
+      }
+    )
+  end
 
   return JSON.generate({ hit: false })
+end
+
+post '/place/:game/*-*' do |game, start_location, end_location|
+  game = game.to_i
+  halt 400 unless games.key?(game)
+
+  if games[game].place_ship(start_location, end_location)
+    return JSON.generate(
+      {
+        message: 'Ship placed'
+      }
+    )
+  end
+
+  halt 400
 end
 
 get '/board/:game' do |game|

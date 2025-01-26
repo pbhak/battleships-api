@@ -14,7 +14,7 @@ class Game # rubocop:disable Metrics/ClassLength
 
   def initialize(players)
     # Creates a new two-dimensional array representing a 10x10 game board
-    @board = Array.new(10) { Array.new(10, :occupied) }
+    @board = Array.new(10) { Array.new(10, :empty) }
     @ships = create_ships
     @players = players
   end
@@ -69,10 +69,12 @@ class Game # rubocop:disable Metrics/ClassLength
     true
   end
 
-  def attack(location) # rubocop:disable Metrics/AbcSize,Metrics/MethodLength
+  def attack(location) # rubocop:disable Metrics/AbcSize,Metrics/MethodLength,Metrics/CyclomaticComplexity
     col = location[0].ord - 96
     row = location[1].to_i
+    sunk = false
 
+    return false unless col.between?(1, 10) && row.between?(1, 10)
     return false unless occupied?(col, row)
 
     # Find the ship that was hit
@@ -82,11 +84,16 @@ class Game # rubocop:disable Metrics/ClassLength
       sink(col, row)
       @ships[ship_name][:hit] << [col, row]
       # Mark ship as sunk if all of its points have been hit
-      @ships[ship_name][:sunk] = true if @ships[ship_name][:hit].sort == @ships[ship_name][:location].sort
+      if @ships[ship_name][:hit].sort == @ships[ship_name][:location].sort
+        @ships[ship_name][:sunk] = true
+        sunk = true
+      end
       break
     end
 
-    true
+    return :hit unless sunk
+
+    :sunk
   end
 
   def to_s
@@ -182,5 +189,9 @@ class Game # rubocop:disable Metrics/ClassLength
     end
 
     ships_left
+  end
+
+  def self.convert_to_letters(location)
+    "#{(location[0] + 96).chr}#{location[1]}"
   end
 end
