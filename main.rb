@@ -6,10 +6,10 @@ require_relative 'lib/player'
 
 games = {}
 players = []
-players << Player.new(players)
-players << Player.new(players)
 
-set :show_exceptions, false
+set :port, 43357
+set :environment, 'production'
+# set :environment, 'development'
 
 before do
   content_type 'application/json'
@@ -22,11 +22,25 @@ before do
 end
 
 error 500 do
-  JSON.generate({ error: '500 Internal Server Error', message: env['sinatra.error'].message })
+  JSON.generate(
+    { 
+      error: '500 Internal Server Error', 
+      message: env['sinatra.error'].message 
+    }
+  )
 end
 
 error 400 do
-  JSON.generate({ error: '400 Bad Request', message: 'Invalid request' })
+  JSON.generate(
+    {
+      error: '400 Bad Request', 
+      message: 'Invalid request' 
+    }
+  )
+end
+
+not_found do
+  'Not Found'
 end
 
 post '/newplayer' do
