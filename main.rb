@@ -86,7 +86,7 @@ delete '/delete/:id' do |id|
     )
   elsif id.digits.length == 4
     deleted = false
-    player.each_with_index do |player, index|
+    players.each_with_index do |player, index|
       next unless player.id == id
 
       players.delete_at(index)
