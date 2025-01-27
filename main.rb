@@ -23,9 +23,9 @@ end
 
 error 500 do
   JSON.generate(
-    { 
-      error: '500 Internal Server Error', 
-      message: env['sinatra.error'].message 
+    {
+      error: '500 Internal Server Error',
+      message: env['sinatra.error'].message
     }
   )
 end
@@ -101,11 +101,11 @@ delete '/delete/:id' do |id|
 end
 
 get '/games' do
-  games_json = []
+  games_json = {}
 
+  games_json['games'] = games.length
   games.each do |id, game|
-    games_json << {
-      id: id,
+    games_json[id] = {
       ships_remaining: game.remaining_ships,
       players: game.players
     }
