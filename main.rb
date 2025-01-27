@@ -49,8 +49,7 @@ post '/newplayer' do
   JSON.generate(
     {
       id: players[-1].id,
-      name: players[-1].name,
-      message: 'New player created'
+      name: players[-1].name
     }
   )
 end
@@ -68,7 +67,6 @@ post '/newgame' do
   JSON.generate(
     {
       id: id,
-      message: 'New game created',
       players: @request_body['players']
     }
   )
@@ -187,7 +185,7 @@ post '/place/:game/*-*' do |game, start_location, end_location|
   if games[game].place_ship(start_location, end_location)
     return JSON.generate(
       {
-        message: 'Ship placed'
+        ship_placed: true
       }
     )
   end
@@ -203,7 +201,7 @@ post '/place/:game/random' do |game|
 
   JSON.generate(
     {
-      message: 'Ships placed'
+      ships_placed: true
     }
   )
 end
