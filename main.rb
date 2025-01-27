@@ -97,7 +97,7 @@ delete '/delete/:id' do |id|
     return JSON.generate(
       {
         id: id,
-        message: deleted ? 'Player not found' : 'Player deleted'
+        message: deleted ? 'Player deleted' : 'Player not found'
       }
     )
   end
