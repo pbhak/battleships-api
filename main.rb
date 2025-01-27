@@ -85,7 +85,14 @@ delete '/delete/:id' do |id|
       }
     )
   elsif id.digits.length == 4
-    deleted = players.delete(id).nil?
+    deleted = false
+    player.each_with_index do |player, index|
+      next unless player.id == id
+
+      players.delete_at(index)
+      deleted = true
+      break
+    end
 
     return JSON.generate(
       {
