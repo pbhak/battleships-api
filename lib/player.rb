@@ -12,9 +12,6 @@ class Player
 
       @id = rand(1000..9999) while players.map(&:id).include?(@id)
     end
-    @game_id = nil
     @name = name
-    @turn = nil
-    @opponent = nil
   end
 end

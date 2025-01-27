@@ -33,8 +33,8 @@ end
 error 400 do
   JSON.generate(
     {
-      error: '400 Bad Request', 
-      message: 'Invalid request' 
+      error: '400 Bad Request',
+      message: 'Invalid request'
     }
   )
 end
@@ -120,9 +120,7 @@ get '/players' do
   players_json['players'] = players.length
   players.each do |player|
     players_json[player.id] = {
-      name: player.name,
-      game_id: player.game_id,
-      opponent: player.opponent
+      name: player.name
     }
   end
 
