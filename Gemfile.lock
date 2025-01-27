@@ -53,6 +53,7 @@ GEM
     unicode-display_width (3.1.2)
       unicode-emoji (~> 4.0, >= 4.0.4)
     unicode-emoji (4.0.4)
+    wdm (0.2.0)
 
 PLATFORMS
   x64-mingw-ucrt
@@ -63,6 +64,7 @@ DEPENDENCIES
   rackup
   rubocop
   sinatra
+  wdm (>= 0.1.0)
 
 BUNDLED WITH
    2.5.22
