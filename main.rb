@@ -129,13 +129,12 @@ end
 
 get '/ships/:id' do |id|
   id = id.to_i
-  ships_json = []
+  ships_json = {}
 
   return JSON.generate(ships_json) unless games.key?(id)
 
   games[id].ships.each do |ship_name, ship|
-    ships_json << {
-      name: ship_name.to_s.split('_').map(&:capitalize).join(' '),
+    ships_json[ship_name.to_s.split('_').map(&:capitalize).join(' ')] = {
       size: ship[:size],
       location: ship[:location].map { |location| Game.convert_to_letters(location) },
       hits: ship[:hit].map { |location| Game.convert_to_letters(location) },
