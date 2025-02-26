@@ -43,6 +43,10 @@ not_found do
   'Not Found'
 end
 
+get '/' do
+  redirect 'https://github.com/pbhak/battleships-api/wiki/'
+end
+
 post '/newplayer' do
   players << (params['name'].nil? ? Player.new(players) : Player.new(players, params['name']))
 
